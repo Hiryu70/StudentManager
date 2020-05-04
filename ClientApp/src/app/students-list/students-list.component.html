@@ -1,0 +1,23 @@
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Surname</th>
+            <th scope="col">Patronymic</th>
+            <th scope="col">Gender</th>
+            <th scope="col">Nickname</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let student of service.list">
+            <td (click)="populateForm(student)">{{student.Name}}</td>
+            <td (click)="populateForm(student)">{{student.Surname}}</td>
+            <td (click)="populateForm(student)">{{student.Patronymic}}</td>
+            <td (click)="populateForm(student)">{{student.Gender}}</td>
+            <td (click)="populateForm(student)">{{student.Nickname}}</td>
+            <td>
+                <i class="far fa-trash-alt fa-lg text-danger" (click)="onDelete(student.Id)"></i>
+            </td>
+        </tr>
+    </tbody>
+</table>

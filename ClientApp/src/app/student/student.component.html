@@ -1,0 +1,49 @@
+<form #form="ngForm" autocomplete="off" (submit)="onSubmit(form)">
+    <input type="hidden" class="Id" [value]="service.formData.Id">
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Name</label>
+        <div class="col-sm-9">
+            <input name="Name" [(ngModel)]="service.formData.Name" class="form-control" placeholder="Name"
+                required maxlength="40">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Surname</label>
+        <div class="col-sm-9">
+            <input name="Surname" #Surname="ngModel" [(ngModel)]="service.formData.Surname" class="form-control"
+                placeholder="Surname" required maxlength="40">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Patronymic</label>
+        <div class="col-sm-9">
+            <input name="Patronymic" #Patronymic="ngModel" [(ngModel)]="service.formData.Patronymic" class="form-control"
+                placeholder="Patronymic" maxlength="60">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Gender</label>
+        <div class="col-sm-9">
+            <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" required>
+                <option selected>Choose...</option>
+                <option value="1">Female</option>
+                <option value="2">Male</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Nickname</label>
+        <div class="col-sm-9">
+            <input name="Nickname" #Nickname="ngModel" [(ngModel)]="service.formData.Nickname" class="form-control"
+                placeholder="Nickname" minlength="6" maxlength="16">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col p-2">
+            <button class="btn btn-primary btn-lg btn-block" [disabled]="form.invalid" type="submit">Save</button>
+        </div>
+        <div class="col p-2">
+            <button class="btn btn-secondary btn-lg btn-block" type="button">Cancel</button>
+        </div>
+    </div>
+</form>
