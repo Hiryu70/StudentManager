@@ -6,8 +6,9 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class StudentService {
-  formData:Student = new Student();
+  formData: Student = new Student();
   list: Student[];
+  studentsCount: number = 0;
   readonly rootUrl = 'http://localhost:5000/api';
   constructor(private http:HttpClient) { }
 
@@ -26,6 +27,9 @@ export class StudentService {
   refreshList(){
     this.http.get(this.rootUrl + '/Student')
     .toPromise()
-    .then(res => this.list = res as Student[]);
+    .then(res => {
+      this.list = res as Student[];
+      this.studentsCount = this.list.length;
+    });
   }
 }
