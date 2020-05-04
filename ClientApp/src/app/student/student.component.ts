@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { StudentService } from '../shared/student.service';
-import { NgForm } from '@angular/forms';
 import { Student } from '../shared/student.model';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-student',
@@ -9,34 +9,31 @@ import { Student } from '../shared/student.model';
   styles: []
 })
 export class StudentComponent implements OnInit {
-  constructor(private service:StudentService) { }
+  public student: Student;
+  
+  constructor(private bsModalRef: BsModalRef, private service: StudentService) { }
 
   ngOnInit() {
-    this.resetForm();
   }
 
-  resetForm(form?:NgForm){
-    if (form != null){
-      form.resetForm();
-    }
-    this.service.formData = new Student();
+  public closeModal(){
+    this.bsModalRef.hide();
   }
 
-  onSubmit(form:NgForm){
-    if (this.service.formData.Id === undefined){
-      this.insertRecord(form);
+  public saveStudent(){
+    if (this.student.Id === undefined){
+      this.insertRecord();
     }
     else{
-      this.updateRecord(form);
+      this.updateRecord();
     }
-
   }
   
-  insertRecord(form: NgForm){
-    this.service.postStudent().subscribe(
+  private insertRecord(){
+    this.service.postStudent(this.student).subscribe(
       res => {
-        this.resetForm(form);
         this.service.refreshList();
+        this.bsModalRef.hide();
       },
       err => {
         console.log(err);
@@ -44,11 +41,11 @@ export class StudentComponent implements OnInit {
     )
   }
 
-  updateRecord(form: NgForm){
-    this.service.putStudent().subscribe(
+  private updateRecord(){
+    this.service.putStudent(this.student).subscribe(
       res => {
-        this.resetForm(form);
         this.service.refreshList();
+        this.bsModalRef.hide();
       },
       err => {
         console.log(err);

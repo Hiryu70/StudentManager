@@ -6,22 +6,25 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class StudentService {
-  formData: Student = new Student();
   list: Student[];
   studentsCount: number = 0;
   readonly rootUrl = 'http://localhost:5000/api';
   constructor(private http:HttpClient) { }
 
-  postStudent(){
-    return this.http.post(this.rootUrl + '/Student', this.formData);
+  postStudent(student: Student){
+    return this.http.post(this.rootUrl + '/Student', student);
   }
 
-  putStudent(){
-    return this.http.put(this.rootUrl + '/Student/' + this.formData.Id, this.formData);
+  putStudent(student: Student){
+    return this.http.put(this.rootUrl + '/Student/' + student.Id, student);
   }
 
   deleteStudent(id){
     return this.http.delete(this.rootUrl + '/Student/' + id);
+  }
+
+  getStudent(id){
+    return this.http.get(this.rootUrl + '/Student/' + id);
   }
 
   refreshList(){

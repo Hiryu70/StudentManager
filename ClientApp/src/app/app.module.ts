@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { StudentComponent } from './student/student.component';
 import { StudentsListComponent } from './students-list/students-list.component';
 import { StudentService } from './shared/student.service';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,11 @@ import { StudentService } from './shared/student.service';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ModalModule.forRoot()
+  ],
+  entryComponents: [ 
+    StudentComponent 
   ],
   providers: [StudentService],
   bootstrap: [AppComponent]
