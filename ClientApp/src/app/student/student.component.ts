@@ -21,12 +21,19 @@ export class StudentComponent implements OnInit {
   }
 
   public saveStudent(){
-    if (this.student.Id === undefined){
-      this.insertRecord();
-    }
-    else{
-      this.updateRecord();
-    }
+    this.service.nicknameIsFree(this.student.Nickname).subscribe( result => {
+      if (result){
+        if (this.student.Id === undefined){
+          this.insertRecord();
+        }
+        else{
+          this.updateRecord();
+        }
+      }
+      else {
+        console.error("Nickname exists");
+      }
+    }, error => console.error(error));
   }
   
   private insertRecord(){

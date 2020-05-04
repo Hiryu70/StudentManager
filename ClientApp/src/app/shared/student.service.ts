@@ -35,4 +35,8 @@ export class StudentService {
       this.studentsCount = this.list.length;
     });
   }
+
+  nicknameIsFree(nickname){
+    return this.http.delete(this.rootUrl + '/nicknameIsFree/' + nickname);
+  }
 }
