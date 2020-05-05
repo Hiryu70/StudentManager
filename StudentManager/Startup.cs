@@ -10,6 +10,7 @@ using StudentManager.Models;
 using System;
 using System.IO;
 using System.Reflection;
+using Newtonsoft.Json.Converters;
 
 namespace StudentManager
 {
@@ -38,8 +39,10 @@ namespace StudentManager
 				c.IncludeXmlComments(docFilePath);
 			});
 
-			services.AddControllers().AddNewtonsoftJson(options => 
+			services.AddControllers().AddNewtonsoftJson(options =>
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver()); 
+			services.AddControllers().AddNewtonsoftJson(options => 
+				options.SerializerSettings.Converters.Add(new StringEnumConverter()));
 			services.AddDbContext<StudentsContext>(options =>
 				options.UseSqlite(Configuration.GetConnectionString("SqliteConnection")));
 		}

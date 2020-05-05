@@ -3,6 +3,6 @@ export class Student {
     Name: string;
     Surname: string;
     Patronymic: string;
-    Gender: number;
+    Gender: Gender;
     Nickname: string;
 }
