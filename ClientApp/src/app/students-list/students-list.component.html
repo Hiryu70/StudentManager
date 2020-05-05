@@ -24,7 +24,7 @@
                     <td>{{student.Gender}}</td>
                     <td>{{student.Nickname}}</td>
                     <td>
-                        <i class="far fa-trash-alt fa-lg text-danger" (click)="onDelete(student.Id)"></i>
+                        <i class="far fa-trash-alt fa-lg text-danger" (click)="onDelete(student.Id);$event.stopPropagation()"></i>
                     </td>
                 </tr>
             </tbody>

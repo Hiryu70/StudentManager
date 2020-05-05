@@ -36,7 +36,10 @@ export class StudentService {
     });
   }
 
-  nicknameIsFree(nickname){
-    return this.http.delete(this.rootUrl + '/nicknameIsFree/' + nickname);
+  nicknameNotTaken(nickname: string, studentId: string){
+    return this.http.post(this.rootUrl + '/Student/nicknameNotTaken',{
+      Nickname: nickname,
+      StudentId: studentId
+    });
   }
 }
