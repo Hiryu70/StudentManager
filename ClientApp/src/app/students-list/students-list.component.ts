@@ -25,6 +25,10 @@ export class StudentsListComponent implements OnInit {
       this.bsModalRef = this.modalService.show(StudentComponent, { initialState });
   }
 
+  onKey(event: any) {
+    this.service.refreshListFiltred(event.target.value);
+  }
+
   public editStudent(student: Student) {
     this.service.getStudent(student.Id).subscribe(result => {
       const initialState = {

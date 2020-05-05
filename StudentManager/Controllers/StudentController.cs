@@ -20,9 +20,37 @@ namespace StudentManager.Controllers
 		}
 
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
+		public async Task<ActionResult<StudentListDto>> GetStudents()
 		{
-			return await _context.Students.ToListAsync();
+			var students = await _context.Students.ToListAsync();
+			var studentListDto = new StudentListDto
+			{
+				Students = students,
+				TotalCount = students.Count
+			};
+
+			return studentListDto;
+		}
+
+		[HttpPost("filtred")]
+		public async Task<ActionResult<StudentListDto>> GetStudents(FilterParameters filterParameters)
+		{
+			var searchString = filterParameters.SearchString.ToUpper();
+			var students = await _context.Students.Where(s => 
+					s.Name.ToUpper().Contains(searchString) ||
+					s.Surname.ToUpper().Contains(searchString) ||
+					s.Patronymic.ToUpper().Contains(searchString) ||
+					s.Nickname.ToUpper().Contains(searchString))
+				.ToListAsync();
+			var totalStudents = await _context.Students.CountAsync();
+
+			var studentListDto = new StudentListDto
+			{
+				Students = students, 
+				TotalCount = totalStudents
+			};
+
+			return studentListDto;
 		}
 
 		[HttpGet("{id}")]
@@ -91,7 +119,7 @@ namespace StudentManager.Controllers
 			return student;
 		}
 
-		[HttpPost("nicknameNotTaken/")]
+		[HttpPost("nicknameNotTaken")]
 		public async Task<ActionResult<bool>> NicknameNotTaken([FromBody]NicknameNotTakenModel model)
 		{
 			var student = await _context.Students.FirstOrDefaultAsync(s => s.Nickname == model.Nickname);

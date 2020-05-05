@@ -1,13 +1,14 @@
 import { Student } from './student.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { StudentList } from './studentList.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudentService {
-  list: Student[];
-  studentsCount: number = 0;
+  public studentList: StudentList = new StudentList();
+
   readonly rootUrl = 'http://localhost:5000/api';
   constructor(private http:HttpClient) { }
 
@@ -30,9 +31,18 @@ export class StudentService {
   refreshList(){
     this.http.get(this.rootUrl + '/Student')
     .toPromise()
-    .then(res => {
-      this.list = res as Student[];
-      this.studentsCount = this.list.length;
+    .then(result => {
+      this.studentList = result as StudentList;
+    });
+  }
+
+  refreshListFiltred(searchString){
+    this.http.post(this.rootUrl + '/Student/filtred',{
+      SearchString: searchString
+    })
+    .toPromise()
+    .then(result => {
+      this.studentList = result as StudentList;
     });
   }
 

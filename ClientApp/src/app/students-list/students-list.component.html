@@ -1,12 +1,13 @@
 <div>
-    <h3>Students ({{service.studentsCount}})</h3>
+    <h3>Students</h3>
     <div class="d-flex align-items-end flex-column">
         <div><button class="btn btn-link" (click)="newStudent()">Add Student</button></div>
     </div>
     <div class="d-flex">
-        <div class="mr-auto align-items-center p-1">Showing 1 to 50 of 55 students</div>
-        <div class="align-items-center p-1">Search:</div>
-        <div class="align-items-center p-1"><input></div>
+        <div *ngIf="service.studentList.Students.length != service.studentList.TotalCount" class="mr-auto align-items-center p-1">Showing {{service.studentList.Students.length}} of {{service.studentList.TotalCount}} students</div>
+        <div *ngIf="service.studentList.Students.length == service.studentList.TotalCount" class="mr-auto align-items-center p-1">Showing {{service.studentList.TotalCount}} students</div>
+        <div class="ml-auto align-items-center p-1">Search:</div>
+        <div class="align-items-center p-1"><input (keyup)="onKey($event)"></div>
     </div>
     <div>
         <table class="table table-hover">
@@ -19,7 +20,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let student of service.list" (click)="editStudent(student)" style="cursor: pointer;">
+                <tr *ngFor="let student of service.studentList.Students" (click)="editStudent(student)" style="cursor: pointer;">
                     <td>{{student.Name}} {{student.Surname}} {{student.Patronymic}}</td>
                     <td>{{student.Gender}}</td>
                     <td>{{student.Nickname}}</td>
@@ -30,13 +31,4 @@
             </tbody>
         </table>
     </div>
-    <nav aria-label="...">
-            <ul class="pagination pagination-sm">
-              <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1">1</a>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-            </ul>
-          </nav>
 </div>
