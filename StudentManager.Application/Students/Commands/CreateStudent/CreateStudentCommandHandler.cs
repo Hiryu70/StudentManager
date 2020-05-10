@@ -1,39 +1,36 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Text;
-//using System.Threading;
-//using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
+using StudentManager.Application.Common.Interfaces;
+using StudentManager.Domain.Entities;
 
-//namespace StudentManager.Application.Students.Commands.CreateStudent
-//{
-//	class CreateStudentCommandHandler
-//	{
-//		public class Handler : IRequestHandler<CreateStudentCommand>
-//		{
-//			private readonly INorthwindDbContext _context;
-//			private readonly IMediator _mediator;
+namespace StudentManager.Application.Students.Commands.CreateStudent
+{
+	public class CreateStudentCommandHandler : IRequestHandler<CreateStudentCommand>
+	{
+		private readonly IStudentManagerContext _context;
 
-//			public Handler(INorthwindDbContext context, IMediator mediator)
-//			{
-//				_context = context;
-//				_mediator = mediator;
-//			}
+		public CreateStudentCommandHandler(IStudentManagerContext context)
+		{
+			_context = context;
+		}
 
-//			public async Task<Unit> Handle(CreateStudentCommand request, CancellationToken cancellationToken)
-//			{
-//				var entity = new Student
-//				{
-//					Id = request.Id,
-//				};
+		public async Task<Unit> Handle(CreateStudentCommand request, CancellationToken cancellationToken)
+		{
+			var entity = new Student
+			{
+				Name = request.Name,
+				Surname = request.Surname,
+				Patronymic = request.Patronymic,
+				Gender = request.Gender.Value,
+				Nickname = request.Nickname
+			};
 
-//				_context.Customers.Add(entity);
+			_context.Students.Add(entity);
 
-//				await _context.SaveChangesAsync(cancellationToken);
+			await _context.SaveChangesAsync(cancellationToken);
 
-//				await _mediator.Publish(new CustomerCreated { CustomerId = entity.CustomerId }, cancellationToken);
-
-//				return Unit.Value;
-//			}
-//		}
-//    }
-//}
+			return Unit.Value;
+		}
+	}
+}

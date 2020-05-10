@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace StudentManager.Application.Students.Queries.CheckNicknameNotTaken
+﻿namespace StudentManager.Application.Students.Queries.CheckNicknameNotTaken
 {
-	class NicknameNotTakenVm
+	public class NicknameNotTakenVm
 	{
+		public bool Result { get; set; }
 	}
 }

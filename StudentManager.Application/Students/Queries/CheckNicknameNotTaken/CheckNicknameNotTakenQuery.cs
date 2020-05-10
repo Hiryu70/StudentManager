@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using MediatR;
 
 namespace StudentManager.Application.Students.Queries.CheckNicknameNotTaken
 {
-	class CheckNicknameNotTakenQuery
+	public class CheckNicknameNotTakenQuery : IRequest<NicknameNotTakenVm>
 	{
 		public Guid StudentId { get; set; }
 		public string Nickname { get; set; }

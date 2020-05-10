@@ -1,56 +1,56 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Text;
-//using System.Threading;
-//using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using StudentManager.Application.Common.Interfaces;
 
-//namespace StudentManager.Application.Students.Queries.GetStudentsList
-//{
-//	class GetStudentsListQueryHandler : IRequestHandler<GetStudentsListQuery, StudentsListVm>
-//	{
-//		private readonly IStudentManager _context;
-//		private readonly IMapper _mapper;
+namespace StudentManager.Application.Students.Queries.GetStudentsList
+{
+	public class GetStudentsListQueryHandler : IRequestHandler<GetStudentsListQuery, StudentsListVm>
+	{
+		private readonly IStudentManagerContext _context;
+		private readonly IMapper _mapper;
 
-//		public GetStudentsListQueryHandler(IStudentManager context, IMapper mapper)
-//		{
-//			_context = context;
-//			_mapper = mapper;
-//		}
+		public GetStudentsListQueryHandler(IStudentManagerContext context, IMapper mapper)
+		{
+			_context = context;
+			_mapper = mapper;
+		}
 
-//		public async Task<StudentsListVm> Handle(GetStudentsListQuery request, CancellationToken cancellationToken)
-//		{
-//			//var searchString = filterParameters.SearchString.ToUpper();
-//			//var students = await _context.Students.Where(s =>
-//			//		s.Name.ToUpper().Contains(searchString) ||
-//			//		s.Surname.ToUpper().Contains(searchString) ||
-//			//		s.Patronymic.ToUpper().Contains(searchString) ||
-//			//		s.Nickname.ToUpper().Contains(searchString))
-//			//	.ToListAsync();
-//			//var totalStudents = await _context.Students.CountAsync();
+		public async Task<StudentsListVm> Handle(GetStudentsListQuery request, CancellationToken cancellationToken)
+		{
+			List<StudentLookupDto> students;
+			if (string.IsNullOrEmpty(request.SearchString))
+			{
+				students = await _context.Students
+					.ProjectTo<StudentLookupDto>(_mapper.ConfigurationProvider)
+					.ToListAsync(cancellationToken);
+			}
+			else
+			{
+				var searchString = request.SearchString.ToUpper();
+				students = await _context.Students.Where(s =>
+						s.Name.ToUpper().Contains(searchString) ||
+						s.Surname.ToUpper().Contains(searchString) ||
+						s.Patronymic.ToUpper().Contains(searchString) ||
+						s.Nickname.ToUpper().Contains(searchString))
+					.ProjectTo<StudentLookupDto>(_mapper.ConfigurationProvider)
+					.ToListAsync(cancellationToken);
+			}
 
-//			//var studentListDto = new StudentListDto
-//			//{
-//			//	Students = students,
-//			//	TotalCount = totalStudents
-//			//};
+			var totalStudents = await _context.Students.CountAsync(cancellationToken);
 
-//			//return studentListDto;
+			var vm = new StudentsListVm
+			{
+				Students = students,
+				TotalCount = totalStudents
+			};
 
-
-
-//			var students = await _context.Students
-//				.ProjectTo<StudentLookupDto>(_mapper.ConfigurationProvider)
-//				.ToListAsync();
-
-//			var vm = new StudentsListVm
-//			{
-//				Students = students,
-//				TotalCount = students.Count
-//			};
-
-//			return vm;
-//		}
-
-
-//	}
-//}
+			return vm;
+		}
+	}
+}

@@ -1,10 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using StudentManager.Application.Common.Interfaces;
 
 namespace StudentManager.Application.Students.Queries.CheckNicknameNotTaken
 {
-	class CheckNicknameNotTakenQueryHandler
+	public class CheckNicknameNotTakenQueryHandler : IRequestHandler<CheckNicknameNotTakenQuery, NicknameNotTakenVm>
 	{
+		private readonly IStudentManagerContext _context;
+
+		public CheckNicknameNotTakenQueryHandler(IStudentManagerContext context)
+		{
+			_context = context;
+		}
+
+		public async Task<NicknameNotTakenVm> Handle(CheckNicknameNotTakenQuery request, CancellationToken cancellationToken)
+		{
+			var student = await _context.Students.FirstOrDefaultAsync(s => s.Nickname == request.Nickname, cancellationToken);
+			if (student == null)
+			{
+				return new NicknameNotTakenVm { Result = true };
+			}
+
+			if (student.Id == request.StudentId)
+			{
+				return new NicknameNotTakenVm { Result = true };
+			}
+
+			return new NicknameNotTakenVm { Result = false }; ;
+		}
 	}
 }

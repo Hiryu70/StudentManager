@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace StudentManager.Application.Students.Queries.GetStudentsList
 {
-	class StudentsListVm
+	public class StudentsListVm
 	{
 		public int TotalCount { get; set; }
 		public IList<StudentLookupDto> Students { get; set; }

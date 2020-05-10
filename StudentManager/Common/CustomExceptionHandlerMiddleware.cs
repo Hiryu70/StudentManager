@@ -7,15 +7,24 @@ using StudentManager.Application.Common.Exceptions;
 
 namespace StudentManager.API.Common
 {
+	/// <summary>
+	/// Middleware for exception handling
+	/// </summary>
 	public class CustomExceptionHandlerMiddleware
 	{
 		private readonly RequestDelegate _next;
 
+		/// <inheritdoc />
 		public CustomExceptionHandlerMiddleware(RequestDelegate next)
 		{
 			_next = next;
 		}
 
+		/// <summary>
+		/// Execute middleware logic
+		/// </summary>
+		/// <param name="context"></param>
+		/// <returns></returns>
 		public async Task Invoke(HttpContext context)
 		{
 			try

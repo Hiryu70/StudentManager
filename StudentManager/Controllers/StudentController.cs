@@ -3,7 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StudentManager.Application.Students.Commands.CreateStudent;
+using StudentManager.Application.Students.Commands.DeleteStudent;
 using StudentManager.Application.Students.Queries.GetStudentDetail;
+using StudentManager.Application.Students.Commands.UpdateStudent;
+using StudentManager.Application.Students.Queries.CheckNicknameNotTaken;
+using StudentManager.Application.Students.Queries.GetStudentsList;
+using StudentManager.Domain.Entities;
 
 namespace StudentManager.API.Controllers
 {
@@ -12,19 +18,32 @@ namespace StudentManager.API.Controllers
 	/// </summary>
 	public class StudentController : BaseController
 	{
-		//[HttpGet]
-		//public async Task<ActionResult<StudentListDto>> GetStudents()
-		//{
-		//	var vm = await Mediator.Send(new GetStudentsListQuery());
+		/// <summary>
+		/// Get all students
+		/// </summary>
+		/// <returns>List of students</returns>
+		[HttpGet]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<StudentsListVm>> GetAll()
+		{
+			var vm = await Mediator.Send(new GetStudentsListQuery { SearchString = string.Empty });
 
-		//	return Ok(vm);
-		//}
+			return Ok(vm);
+		}
 
-		//[HttpPost("filtred")]
-		//public async Task<ActionResult<StudentListDto>> GetStudents(FilterParameters filterParameters)
-		//{
+		/// <summary>
+		/// Get all students with filter parameter
+		/// </summary>
+		/// <param name="query">Filter parameters</param>
+		/// <returns>List of students</returns>
+		[HttpPost]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<StudentsListVm>> GetAllFiltered([FromBody]GetStudentsListQuery query)
+		{
+			var vm = await Mediator.Send(query);
 
-		//}
+			return Ok(vm);
+		}
 
 		/// <summary>
 		/// Get student details
@@ -34,64 +53,65 @@ namespace StudentManager.API.Controllers
 		[HttpGet("{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<StudentDetailVm>> GetStudent(Guid id)
+		public async Task<ActionResult<StudentDetailVm>> Get(Guid id)
 		{
 			var vm = await Mediator.Send(new GetStudentDetailQuery { Id = id });
 
 			return Ok(vm);
 		}
 
-		//[HttpPut("{id}")]
-		//public async Task<IActionResult> PutStudent([FromBody]UpdateStudentCommand command)
-		//{
-		//	await Mediator.Send(command);
+		/// <summary>
+		/// Update student
+		/// </summary>
+		/// <param name="command">New student details</param>
+		[HttpPut]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<IActionResult> Update([FromBody]UpdateStudentCommand command)
+		{
+			await Mediator.Send(command);
 
-		//	return NoContent();
-		//}
+			return NoContent();
+		}
 
-		//[HttpPost]
-		//public async Task<ActionResult<Student>> PostStudent(Student student)
-		//{
-		//	_context.Students.Add(student);
-		//	await _context.SaveChangesAsync();
+		/// <summary>
+		/// Create new student
+		/// </summary>
+		/// <param name="command">New student details</param>
+		[HttpPost]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		public async Task<IActionResult> Create(CreateStudentCommand command)
+		{
+			await Mediator.Send(command);
 
-		//	return CreatedAtAction("GetStudent", new { id = student.Id }, student);
-		//}
+			return NoContent();
+		}
 
-		//[HttpDelete("{id}")]
-		//public async Task<ActionResult<Student>> DeleteStudent(Guid id)
-		//{
-		//	var student = await _context.Students.FindAsync(id);
-		//	if (student == null)
-		//	{
-		//		return NotFound();
-		//	}
+		/// <summary>
+		/// Delete student
+		/// </summary>
+		/// <param name="id">Student ID</param>
+		[HttpDelete("{id}")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<Student>> Delete(Guid id)
+		{
+			await Mediator.Send(new DeleteStudentCommand { Id = id });
 
-		//	_context.Students.Remove(student);
-		//	await _context.SaveChangesAsync();
+			return NoContent();
+		}
 
-		//	return student;
-		//}
+		/// <summary>
+		/// Check if nickname is already taken
+		/// </summary>
+		/// <returns>True - nickname not taken. False - nickname already taken</returns>
+		[HttpPost]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<bool>> CheckNicknameNotTaken([FromBody]CheckNicknameNotTakenQuery query)
+		{
+			var vm = await Mediator.Send(query);
 
-		//[HttpPost("nicknameNotTaken")]
-		//public async Task<ActionResult<bool>> NicknameNotTaken([FromBody]NicknameNotTakenModel model)
-		//{
-		//	var student = await _context.Students.FirstOrDefaultAsync(s => s.Nickname == model.Nickname);
-		//	if (student == null)
-		//	{
-		//		return true;
-		//	}
-
-		//	if (student.Id == model.StudentId)
-		//	{
-		//		return true;
-		//	}
-
-		//	return false;
-		//}
-		//private bool StudentExists(Guid id)
-		//{
-		//	return _context.Students.Any(e => e.Id == id);
-		//}
+			return Ok(vm);
+		}
 	}
 }

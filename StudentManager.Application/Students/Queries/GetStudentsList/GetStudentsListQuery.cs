@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MediatR;
 
 namespace StudentManager.Application.Students.Queries.GetStudentsList
 {
-	class GetStudentsListQuery
+	public class GetStudentsListQuery : IRequest<StudentsListVm>
 	{
 		public string SearchString { get; set; }
 	}

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using MediatR;
 
 namespace StudentManager.Application.Students.Commands.DeleteStudent
 {
-	class DeleteStudentCommand
+	public class DeleteStudentCommand : IRequest
 	{
+		public Guid Id { get; set; }
 	}
 }

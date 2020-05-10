@@ -1,35 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using StudentManager.Application.Common.Exceptions;
+using StudentManager.Application.Common.Interfaces;
+using StudentManager.Domain.Entities;
 
 namespace StudentManager.Application.Students.Commands.UpdateStudent
 {
-	class UpdateStudentCommandHandler
+	public class UpdateStudentCommandHandler : IRequestHandler<UpdateStudentCommand>
 	{
+		private readonly IStudentManagerContext _context;
 
-		//if (id != student.Id)
-		//{
-		//	return BadRequest();
-		//}
+		public UpdateStudentCommandHandler(IStudentManagerContext context)
+		{
+			_context = context;
+		}
 
-		//_context.Entry(student).State = EntityState.Modified;
+		public async Task<Unit> Handle(UpdateStudentCommand request, CancellationToken cancellationToken)
+		{
+			var entity = await _context.Students.SingleOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
+			if (entity == null)
+			{
+				throw new NotFoundException(nameof(Student), request.Id);
+			}
 
-		//try
-		//{
-		//	await _context.SaveChangesAsync();
-		//}
-		//catch (DbUpdateConcurrencyException)
-		//{
-		//	if (!StudentExists(id))
-		//	{
-		//		return NotFound();
-		//	}
-		//	else
-		//	{
-		//		throw;
-		//	}
-		//}
+			entity.Name = request.Name;
+			entity.Surname = request.Surname;
+			entity.Patronymic = request.Patronymic;
+			entity.Gender = request.Gender.Value;
+			entity.Nickname = request.Nickname;
 
-		//return NoContent();
+			await _context.SaveChangesAsync(cancellationToken);
+
+			return Unit.Value;
+		}
 	}
 }
