@@ -1,143 +1,97 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using StudentManager.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using StudentManager.Application.Students.Queries.GetStudentDetail;
 
-namespace StudentManager.Controllers
+namespace StudentManager.API.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class StudentController : ControllerBase
+	/// <summary>
+	/// Students controller
+	/// </summary>
+	public class StudentController : BaseController
 	{
-		private readonly StudentsContext _context;
+		//[HttpGet]
+		//public async Task<ActionResult<StudentListDto>> GetStudents()
+		//{
+		//	var vm = await Mediator.Send(new GetStudentsListQuery());
 
-		public StudentController(StudentsContext context)
-		{
-			_context = context;
-		}
+		//	return Ok(vm);
+		//}
 
-		[HttpGet]
-		public async Task<ActionResult<StudentListDto>> GetStudents()
-		{
-			var students = await _context.Students.ToListAsync();
-			var studentListDto = new StudentListDto
-			{
-				Students = students,
-				TotalCount = students.Count
-			};
+		//[HttpPost("filtred")]
+		//public async Task<ActionResult<StudentListDto>> GetStudents(FilterParameters filterParameters)
+		//{
 
-			return studentListDto;
-		}
+		//}
 
-		[HttpPost("filtred")]
-		public async Task<ActionResult<StudentListDto>> GetStudents(FilterParameters filterParameters)
-		{
-			var searchString = filterParameters.SearchString.ToUpper();
-			var students = await _context.Students.Where(s => 
-					s.Name.ToUpper().Contains(searchString) ||
-					s.Surname.ToUpper().Contains(searchString) ||
-					s.Patronymic.ToUpper().Contains(searchString) ||
-					s.Nickname.ToUpper().Contains(searchString))
-				.ToListAsync();
-			var totalStudents = await _context.Students.CountAsync();
-
-			var studentListDto = new StudentListDto
-			{
-				Students = students, 
-				TotalCount = totalStudents
-			};
-
-			return studentListDto;
-		}
-
+		/// <summary>
+		/// Get student details
+		/// </summary>
+		/// <param name="id">Student ID</param>
+		/// <returns>Student details</returns>
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Student>> GetStudent(Guid id)
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<StudentDetailVm>> GetStudent(Guid id)
 		{
-			var student = await _context.Students.FindAsync(id);
+			var vm = await Mediator.Send(new GetStudentDetailQuery { Id = id });
 
-			if (student == null)
-			{
-				return NotFound();
-			}
-
-			return student;
+			return Ok(vm);
 		}
 
-		[HttpPut("{id}")]
-		public async Task<IActionResult> PutStudent(Guid id, Student student)
-		{
-			if (id != student.Id)
-			{
-				return BadRequest();
-			}
+		//[HttpPut("{id}")]
+		//public async Task<IActionResult> PutStudent([FromBody]UpdateStudentCommand command)
+		//{
+		//	await Mediator.Send(command);
 
-			_context.Entry(student).State = EntityState.Modified;
+		//	return NoContent();
+		//}
 
-			try
-			{
-				await _context.SaveChangesAsync();
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!StudentExists(id))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
-			}
+		//[HttpPost]
+		//public async Task<ActionResult<Student>> PostStudent(Student student)
+		//{
+		//	_context.Students.Add(student);
+		//	await _context.SaveChangesAsync();
 
-			return NoContent();
-		}
+		//	return CreatedAtAction("GetStudent", new { id = student.Id }, student);
+		//}
 
-		[HttpPost]
-		public async Task<ActionResult<Student>> PostStudent(Student student)
-		{
-			_context.Students.Add(student);
-			await _context.SaveChangesAsync();
+		//[HttpDelete("{id}")]
+		//public async Task<ActionResult<Student>> DeleteStudent(Guid id)
+		//{
+		//	var student = await _context.Students.FindAsync(id);
+		//	if (student == null)
+		//	{
+		//		return NotFound();
+		//	}
 
-			return CreatedAtAction("GetStudent", new { id = student.Id }, student);
-		}
+		//	_context.Students.Remove(student);
+		//	await _context.SaveChangesAsync();
 
-		[HttpDelete("{id}")]
-		public async Task<ActionResult<Student>> DeleteStudent(Guid id)
-		{
-			var student = await _context.Students.FindAsync(id);
-			if (student == null)
-			{
-				return NotFound();
-			}
+		//	return student;
+		//}
 
-			_context.Students.Remove(student);
-			await _context.SaveChangesAsync();
+		//[HttpPost("nicknameNotTaken")]
+		//public async Task<ActionResult<bool>> NicknameNotTaken([FromBody]NicknameNotTakenModel model)
+		//{
+		//	var student = await _context.Students.FirstOrDefaultAsync(s => s.Nickname == model.Nickname);
+		//	if (student == null)
+		//	{
+		//		return true;
+		//	}
 
-			return student;
-		}
+		//	if (student.Id == model.StudentId)
+		//	{
+		//		return true;
+		//	}
 
-		[HttpPost("nicknameNotTaken")]
-		public async Task<ActionResult<bool>> NicknameNotTaken([FromBody]NicknameNotTakenModel model)
-		{
-			var student = await _context.Students.FirstOrDefaultAsync(s => s.Nickname == model.Nickname);
-			if (student == null)
-			{
-				return true;
-			}
-
-			if (student.Id == model.StudentId)
-			{
-				return true;
-			}
-
-			return false;
-		}
-		private bool StudentExists(Guid id)
-		{
-			return _context.Students.Any(e => e.Id == id);
-		}
+		//	return false;
+		//}
+		//private bool StudentExists(Guid id)
+		//{
+		//	return _context.Students.Any(e => e.Id == id);
+		//}
 	}
 }

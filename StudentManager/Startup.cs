@@ -6,11 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
-using StudentManager.Models;
 using System;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json.Converters;
+using StudentManager.API.Common;
+using StudentManager.Application;
+using StudentManager.EF;
 
 namespace StudentManager
 {
@@ -25,6 +27,9 @@ namespace StudentManager
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddEf(Configuration);
+			services.AddApplication();
+
 			services.AddSwaggerGen(c =>
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo
@@ -43,7 +48,7 @@ namespace StudentManager
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver()); 
 			services.AddControllers().AddNewtonsoftJson(options => 
 				options.SerializerSettings.Converters.Add(new StringEnumConverter()));
-			services.AddDbContext<StudentsContext>(options =>
+			services.AddDbContext<StudentManagerContext>(options =>
 				options.UseSqlite(Configuration.GetConnectionString("SqliteConnection")));
 		}
 
@@ -60,6 +65,8 @@ namespace StudentManager
 			{
 				app.UseDeveloperExceptionPage();
 			}
+
+			app.UseCustomExceptionHandler();
 
 			app.UseCors(options => 
 				options.WithOrigins("http://localhost:4200")
