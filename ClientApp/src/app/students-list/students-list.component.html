@@ -4,8 +4,8 @@
         <div><button class="btn btn-link" (click)="newStudent()">Add Student</button></div>
     </div>
     <div class="d-flex">
-        <div *ngIf="studentList.Students.length != studentList.TotalCount" class="mr-auto align-items-center p-1">Showing {{studentList.Students.length}} of {{studentList.TotalCount}} students</div>
-        <div *ngIf="studentList.Students.length == studentList.TotalCount" class="mr-auto align-items-center p-1">Showing {{studentList.TotalCount}} students</div>
+        <div *ngIf="totalStudents != filteredStudents" class="mr-auto align-items-center p-1">Showing {{filteredStudents}} of {{totalStudents}} students</div>
+        <div *ngIf="totalStudents == filteredStudents" class="mr-auto align-items-center p-1">Showing {{totalStudents}} students</div>
         <div class="ml-auto align-items-center p-1">Search:</div>
         <div class="align-items-center p-1"><input (keyup)="onKey($event)"></div>
     </div>
@@ -20,12 +20,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let student of studentList.Students" (click)="editStudent(student)" style="cursor: pointer;">
-                    <td>{{student.Name}} {{student.Surname}} {{student.Patronymic}}</td>
-                    <td>{{student.Gender}}</td>
-                    <td>{{student.Nickname}}</td>
+                <tr *ngFor="let student of students" (click)="editStudent(student)" style="cursor: pointer;">
+                    <td>{{student.name}} {{student.surname}} {{student.patronymic}}</td>
+                    <td>{{student.gender}}</td>
+                    <td>{{student.nickname}}</td>
                     <td>
-                        <i class="far fa-trash-alt fa-lg text-danger" (click)="onDelete(student.Id);$event.stopPropagation()"></i>
+                        <i class="far fa-trash-alt fa-lg text-danger" (click)="onDelete(student.id);$event.stopPropagation()"></i>
                     </td>
                 </tr>
             </tbody>

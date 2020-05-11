@@ -5,7 +5,7 @@ using StudentManager.Domain.Entities;
 
 namespace StudentManager.Application.Students.Queries.GetStudentsList
 {
-	public class StudentLookupDto : IMapFrom<Student>
+	public class StudentVm : IMapFrom<Student>
 	{
 		public Guid Id { get; set; }
 		public string Name { get; set; }
@@ -16,7 +16,7 @@ namespace StudentManager.Application.Students.Queries.GetStudentsList
 
 		public void Mapping(Profile profile)
 		{
-			profile.CreateMap<Student, StudentLookupDto>();
+			profile.CreateMap<Student, StudentVm>();
 		}
 	}
 }

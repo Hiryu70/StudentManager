@@ -1,6 +1,6 @@
 <div class="modal-header">
-    <h4 *ngIf="student.Id == undefined" class="modal-title">New Student</h4>
-    <h4 *ngIf="student.Id != undefined" class="modal-title">Edit Student</h4>
+    <h4 *ngIf="student.id == undefined" class="modal-title">New Student</h4>
+    <h4 *ngIf="student.id != undefined" class="modal-title">Edit Student</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -39,7 +39,6 @@
             <label class="col-sm-3 col-form-label">Gender</label>
             <div class="col-sm-9">
                 <select formControlName="gender" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.gender.errors }">
-                    <!-- <option value=""></option> -->
                     <option value="Female">Female</option>
                     <option value="Male">Male</option>
                 </select>

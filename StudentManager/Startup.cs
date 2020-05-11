@@ -65,6 +65,7 @@ namespace StudentManager.API
 					options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 					options.SerializerSettings.Converters.Add(new StringEnumConverter());
 				})
+				.AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null)
 				.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<IStudentManagerContext>());
 			services.AddDbContext<StudentManagerContext>(options =>
 				options.UseSqlite(Configuration.GetConnectionString("SqliteConnection")));

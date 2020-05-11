@@ -1,21 +1,18 @@
-import { StudentService } from '../shared/student.service';
 import { FormGroup } from '@angular/forms';
-import { CheckNickname } from '../shared/checkNickname.model';
-import { NicknameNotTakenVm } from '../shared/nicknameNotTakenVm.model';
+import { Service, CheckNicknameNotTakenQuery } from '../api/api.client.generated';
 
-export function NicknameNotTaken(service: StudentService, studentId: string) {
+export function NicknameNotTaken(service: Service, studentId: string) {
     return (formGroup: FormGroup) => {
         const control = formGroup.controls["nickname"];
 
-        let checkNickname = new CheckNickname();
-        checkNickname.Nickname = control.value;
-        checkNickname.StudentId = studentId;
+        let checkNickname = new CheckNicknameNotTakenQuery();
+        checkNickname.nickname = control.value;
+        checkNickname.studentId = studentId;
 
-        service.nicknameNotTaken(checkNickname)
-        .toPromise()
-        .then(res => {
-          var nicknameNotTaken = res as NicknameNotTakenVm;
-          if (!nicknameNotTaken.Result){
+        service.checkNicknameNotTaken(checkNickname)
+        .subscribe(result => {
+          var nicknameNotTaken = result;
+          if (!nicknameNotTaken.result){
               control.setErrors({ nicknameTaken: true });
           }
         });

@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { StudentService } from '../shared/student.service';
-import { Student } from '../shared/student.model';
+import { Service, StudentVm, CreateStudentCommand, UpdateStudentCommand } from '../api/api.client.generated';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NicknameNotTaken } from '../validators/nickname-not-taken.validator';
-import { StudentList } from '../shared/studentList.model';
 import { StudentsListComponent } from '../students-list/students-list.component';
 
 @Component({
@@ -13,22 +11,22 @@ import { StudentsListComponent } from '../students-list/students-list.component'
   styles: []
 })
 export class StudentComponent implements OnInit {
-  public student: Student;
+  public student: StudentVm;
   public studentsListComponent: StudentsListComponent;
   registerForm: FormGroup;
   submitted = false;
 
-  constructor(private bsModalRef: BsModalRef, private service: StudentService, private formBuilder: FormBuilder) { }
+  constructor(private bsModalRef: BsModalRef, private service: Service, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
-      name: [this.student.Name, [Validators.required, Validators.maxLength(40)]],
-      surname: [this.student.Surname, [Validators.required, Validators.maxLength(40)]],
-      patronymic: [this.student.Patronymic, Validators.maxLength(60)],
-      gender: [this.student.Gender, Validators.required],
-      nickname: [this.student.Nickname, [Validators.minLength(6), Validators.maxLength(16)]]
+      name: [this.student.name, [Validators.required, Validators.maxLength(40)]],
+      surname: [this.student.surname, [Validators.required, Validators.maxLength(40)]],
+      patronymic: [this.student.patronymic, Validators.maxLength(60)],
+      gender: [this.student.gender, Validators.required],
+      nickname: [this.student.nickname, [Validators.minLength(6), Validators.maxLength(16)]]
     },{
-      validator: NicknameNotTaken(this.service, this.student.Id)
+      validator: NicknameNotTaken(this.service, this.student.id)
     });
   }
 
@@ -40,50 +38,46 @@ export class StudentComponent implements OnInit {
     if (this.registerForm.invalid) {
       return;
     }
-
-    this.student.Name = this.registerForm.controls['name'].value;
-    this.student.Surname = this.registerForm.controls['surname'].value;
-    this.student.Patronymic = this.registerForm.controls['patronymic'].value;
-    this.student.Gender = this.registerForm.controls['gender'].value;
-    this.student.Nickname = this.registerForm.controls['nickname'].value;
     
-    this.saveStudent();
+    if (this.student.id === undefined) {
+      let createStudentCommand = new CreateStudentCommand();
+      createStudentCommand.id = this.student.id;
+      createStudentCommand.name = this.registerForm.controls['name'].value;
+      createStudentCommand.surname = this.registerForm.controls['surname'].value;
+      createStudentCommand.patronymic = this.registerForm.controls['patronymic'].value;
+      createStudentCommand.gender = this.registerForm.controls['gender'].value;
+      createStudentCommand.nickname = this.registerForm.controls['nickname'].value;
+      this.service.create(createStudentCommand).subscribe(
+        res => {
+          this.studentsListComponent.refreshListFiltred();
+          this.bsModalRef.hide();
+        },
+        err => {
+          console.log(err);
+        }
+      )
+    }
+    else {
+      let updateStudentCommand = new UpdateStudentCommand();
+      updateStudentCommand.id = this.student.id;
+      updateStudentCommand.name = this.registerForm.controls['name'].value;
+      updateStudentCommand.surname = this.registerForm.controls['surname'].value;
+      updateStudentCommand.patronymic = this.registerForm.controls['patronymic'].value;
+      updateStudentCommand.gender = this.registerForm.controls['gender'].value;
+      updateStudentCommand.nickname = this.registerForm.controls['nickname'].value;
+      this.service.update(updateStudentCommand).subscribe(
+        res => {
+          this.studentsListComponent.refreshListFiltred();
+          this.bsModalRef.hide();
+        },
+        err => {
+          console.log(err);
+        }
+      )
+    }
   }
 
   public closeModal() {
     this.bsModalRef.hide();
-  }
-
-  public saveStudent() {
-    if (this.student.Id === undefined) {
-      this.insertRecord();
-    }
-    else {
-      this.updateRecord();
-    }
-  }
-
-  private insertRecord() {
-    this.service.postStudent(this.student).subscribe(
-      res => {
-        this.studentsListComponent.refreshListFiltred();
-        this.bsModalRef.hide();
-      },
-      err => {
-        console.log(err);
-      }
-    )
-  }
-
-  private updateRecord() {
-    this.service.putStudent(this.student).subscribe(
-      res => {
-        this.studentsListComponent.refreshListFiltred();
-        this.bsModalRef.hide();
-      },
-      err => {
-        console.log(err);
-      }
-    )
   }
 }

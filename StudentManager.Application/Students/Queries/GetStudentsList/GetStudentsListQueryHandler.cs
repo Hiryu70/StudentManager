@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using StudentManager.Application.Common.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StudentManager.Application.Students.Queries.GetStudentsList
 {
@@ -23,11 +23,11 @@ namespace StudentManager.Application.Students.Queries.GetStudentsList
 
 		public async Task<StudentsListVm> Handle(GetStudentsListQuery request, CancellationToken cancellationToken)
 		{
-			List<StudentLookupDto> students;
+			List<StudentVm> students;
 			if (string.IsNullOrEmpty(request.SearchString))
 			{
 				students = await _context.Students
-					.ProjectTo<StudentLookupDto>(_mapper.ConfigurationProvider)
+					.ProjectTo<StudentVm>(_mapper.ConfigurationProvider)
 					.ToListAsync(cancellationToken);
 			}
 			else
@@ -38,7 +38,7 @@ namespace StudentManager.Application.Students.Queries.GetStudentsList
 						s.Surname.ToUpper().Contains(searchString) ||
 						s.Patronymic.ToUpper().Contains(searchString) ||
 						s.Nickname.ToUpper().Contains(searchString))
-					.ProjectTo<StudentLookupDto>(_mapper.ConfigurationProvider)
+					.ProjectTo<StudentVm>(_mapper.ConfigurationProvider)
 					.ToListAsync(cancellationToken);
 			}
 

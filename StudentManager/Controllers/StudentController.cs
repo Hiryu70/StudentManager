@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,6 @@ using StudentManager.Application.Students.Queries.GetStudentDetail;
 using StudentManager.Application.Students.Commands.UpdateStudent;
 using StudentManager.Application.Students.Queries.CheckNicknameNotTaken;
 using StudentManager.Application.Students.Queries.GetStudentsList;
-using StudentManager.Domain.Entities;
 
 namespace StudentManager.API.Controllers
 {
@@ -80,7 +78,7 @@ namespace StudentManager.API.Controllers
 		/// <param name="command">New student details</param>
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		public async Task<IActionResult> Create(CreateStudentCommand command)
+		public async Task<IActionResult> Create([FromBody]CreateStudentCommand command)
 		{
 			await Mediator.Send(command);
 
@@ -94,7 +92,7 @@ namespace StudentManager.API.Controllers
 		[HttpDelete("{id}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<Student>> Delete(Guid id)
+		public async Task<IActionResult> Delete(Guid id)
 		{
 			await Mediator.Send(new DeleteStudentCommand { Id = id });
 
@@ -107,7 +105,7 @@ namespace StudentManager.API.Controllers
 		/// <returns>True - nickname not taken. False - nickname already taken</returns>
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<ActionResult<bool>> CheckNicknameNotTaken([FromBody]CheckNicknameNotTakenQuery query)
+		public async Task<ActionResult<NicknameNotTakenVm>> CheckNicknameNotTaken([FromBody]CheckNicknameNotTakenQuery query)
 		{
 			var vm = await Mediator.Send(query);
 
