@@ -1,55 +1,41 @@
 import { Student } from './student.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { StudentList } from './studentList.model';
+import { FilterParameters } from './fiterParameters.model';
+import { CheckNickname } from './checkNickname.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudentService {
-  public studentList: StudentList = new StudentList();
-
-  readonly rootUrl = 'http://localhost:5000/api';
+  readonly basePath = 'http://localhost:5000';
   constructor(private http:HttpClient) { }
 
-  postStudent(student: Student){
-    return this.http.post(this.rootUrl + '/Student', student);
+  getAll(){
+    return this.http.get(`${this.basePath}/api/Student/GetAll/`)
   }
 
-  putStudent(student: Student){
-    return this.http.put(this.rootUrl + '/Student/' + student.Id, student);
-  }
-
-  deleteStudent(id){
-    return this.http.delete(this.rootUrl + '/Student/' + id);
+  getAllFiltered(filterParameters: FilterParameters){
+    return this.http.post(`${this.basePath}/api/Student/GetAllFiltered/`, filterParameters);
   }
 
   getStudent(id){
-    return this.http.get(this.rootUrl + '/Student/' + id);
+    return this.http.get(`${this.basePath}/api/Student/Get/${id}`);
   }
 
-  refreshList(){
-    this.http.get(this.rootUrl + '/Student')
-    .toPromise()
-    .then(result => {
-      this.studentList = result as StudentList;
-    });
+  putStudent(student: Student){
+    return this.http.put(`${this.basePath}/api/Student/Update/`, student);
   }
 
-  refreshListFiltred(searchString){
-    this.http.post(this.rootUrl + '/Student/filtred',{
-      SearchString: searchString
-    })
-    .toPromise()
-    .then(result => {
-      this.studentList = result as StudentList;
-    });
+  postStudent(student: Student){
+    return this.http.post(`${this.basePath}/api/Student/Create/`, student);
   }
 
-  nicknameNotTaken(nickname: string, studentId: string){
-    return this.http.post(this.rootUrl + '/Student/nicknameNotTaken',{
-      Nickname: nickname,
-      StudentId: studentId
-    });
+  deleteStudent(id){
+    return this.http.delete(`${this.basePath}/api/Student/Delete/${id}`);
+  }
+
+  nicknameNotTaken(checkNickname: CheckNickname){
+    return this.http.post(`${this.basePath}/api/Student/CheckNicknameNotTaken/`, checkNickname);
   }
 }

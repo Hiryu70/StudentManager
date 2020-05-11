@@ -4,6 +4,8 @@ import { Student } from '../shared/student.model';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NicknameNotTaken } from '../validators/nickname-not-taken.validator';
+import { StudentList } from '../shared/studentList.model';
+import { StudentsListComponent } from '../students-list/students-list.component';
 
 @Component({
   selector: 'app-student',
@@ -12,6 +14,7 @@ import { NicknameNotTaken } from '../validators/nickname-not-taken.validator';
 })
 export class StudentComponent implements OnInit {
   public student: Student;
+  public studentsListComponent: StudentsListComponent;
   registerForm: FormGroup;
   submitted = false;
 
@@ -63,7 +66,7 @@ export class StudentComponent implements OnInit {
   private insertRecord() {
     this.service.postStudent(this.student).subscribe(
       res => {
-        this.service.refreshList();
+        this.studentsListComponent.refreshListFiltred();
         this.bsModalRef.hide();
       },
       err => {
@@ -75,7 +78,7 @@ export class StudentComponent implements OnInit {
   private updateRecord() {
     this.service.putStudent(this.student).subscribe(
       res => {
-        this.service.refreshList();
+        this.studentsListComponent.refreshListFiltred();
         this.bsModalRef.hide();
       },
       err => {
