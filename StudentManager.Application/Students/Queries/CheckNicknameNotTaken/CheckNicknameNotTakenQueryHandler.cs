@@ -17,6 +17,11 @@ namespace StudentManager.Application.Students.Queries.CheckNicknameNotTaken
 
 		public async Task<NicknameNotTakenVm> Handle(CheckNicknameNotTakenQuery request, CancellationToken cancellationToken)
 		{
+			if (string.IsNullOrEmpty(request.Nickname))
+			{
+				return new NicknameNotTakenVm { Result = true };
+			}
+
 			var student = await _context.Students.FirstOrDefaultAsync(s => s.Nickname == request.Nickname, cancellationToken);
 			if (student == null)
 			{

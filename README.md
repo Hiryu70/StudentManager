@@ -11,10 +11,13 @@
 * .NET Core 3.1 SDK
 * Node.js
 * npm
+* @angular/cli
+* @angular-devkit/build-angular
+* ngx-bootstrap
 
 ## Running
-Open solution in Visual Studio 2017. 
-Set StudentManager.API project as Startup Project and build the project.
-Run the application.
-Run `ng serve` for a ClientApp. 
-Navigate to http://localhost:4200/.
+* Open solution in Visual Studio 2017. 
+* Set StudentManager.API project as Startup Project and build the project.
+* Run the application.
+* Run `ng serve` for a ClientApp. 
+* Navigate to http://localhost:4200/.
